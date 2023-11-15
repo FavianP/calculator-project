@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Favian's calculator </title> 
+<style> * {
+    box-sizing: border-box;}
+    html,
+body {
+  height: 100%;
+  margin: 0;
+}
+body {
+  text-align: center;
+  background: linear-gradient(to bottom right, yellow, cyan, green);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /*   height: 100%; */
+}
+div#calculator {
+  background-color: rgba(100, 20, 300, 0.3);
+  height: 105%;
+  width: 90%;
+  border-radius: 50%;
+  border: 2px solid red;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2%;
+  /*   align-items: center; */
+  justify-content: center;
+  padding: 2%;
+  box-sizing: border-box;
+}
+input#display {
+  height: 20%;
+  width: 70%;
+  font-family: "Inconsolata", monospace;
+  text-align: right;
+  padding-right: 2%;
+  font-size: calc(3vw + 3vh);
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(white 20%, rgba(100, 100, 100, 0.2));
+  border-radius: 50%;
+}
+.button-area {
+  display: flex;
+  flex-wrap: wrap;
+  height: 70%;
+  /*   border: 1px solid white; */
+  align-items: center;
+  justify-content: center;
+  gap: 2%;
+}
+#buttons1 {
+  width: 70%;
+  gap: 2%;
+  /*   flex-direction: row-reverse; */
+  /*   align-content: flex-end; */
+}
+#buttons2 {
+  width: 20%;
+  /*   flex-direction: column; */
+  /*   flex-wrap: wrap; */
+}
+.number-button {
+  height: 13%;
+  flex: 1 0 30%;
+  background: linear-gradient(lightblue, black);
+  border-radius: 50%;
+}
+.input-button {
+  cursor: pointer;
+  font-size: calc(2vw + 1vh);
+  overflow: hidden;
+}
+.operator {
+  height: 13%;
+  flex: 0 0 80%;
+  background: linear-gradient(pink, green);
+border-radius: 50%;
+}
+#equal {
+  height: 40%;
+  flex: 2 0 60%;
+  order: 10;
+}
+#clear {
+  background: linear-gradient(pink, red);
+}
+    </style>
+
+</head>
+
+<body>
+    <div id="calculator">
+        <input type="text" id="display" maxLength="10" disabled>
+        <div class="button-area" id="buttons1">
+          <button class="operator input-button" id="equal" type="button">=</button>
+        </div>
+        <div class="button-area" id="buttons2">
+          <button class="operator input-button" id="clear" type="button">C</button>
+          <button class="operator input-button" data-value="+" id="add" type="button">+</button>
+          <button class="operator input-button" data-value="-" id="subtract" type="button">-</button>
+          <button class="operator input-button" data-value="*" id="multiply" type="button">*</button>
+          <button class="operator input-button" data-value="/" id="divide" type="button">/</button>
+        </div>
+      </div>  
+ 
+<script>const calculator = document.getElementById("calculator");
+    const resultDisplay = document.getElementById("display");
+    const buttons1 = document.getElementById("buttons1");
+    const clearButton = document.getElementById("clear");
+    const equalButton = document.getElementById("equal");
+    const addButton = document.getElementById("add");
+    const minusButton = document.getElementById("subtract");
+    const divideButton = document.getElementById("divide");
+    const multiplyButton = document.getElementById("multiply");
+    let maxLength = resultDisplay.maxLength
+    
+    let tempNumber = null;
+    let firstNumber = null;
+    let secondNumber = null;
+    let operation = null;
+    let result = null;
+    
+    for (let i = 0; i < 10; i++) {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.classList.add("number-button");
+      button.classList.add("input-button");
+      button.textContent = i;
+      button.setAttribute("data-value", i);
+      if (i === 0) {
+        button.style.order = 1;
+      }
+      buttons1.appendChild(button);
+    }
+    const numberButtons = document.querySelectorAll(".number-button");
+    
+    numberButtons.forEach((button, index) => {
+      let dataValue = parseInt(button.getAttribute("data-value"));
+    
+      button.addEventListener("click", function (event) {
+        if (resultDisplay.value.length < maxLength) {
+          if (operation === null) {
+            if (firstNumber === null || firstNumber === 0) {
+              firstNumber = dataValue;
+            } else {
+              firstNumber = parseInt(firstNumber.toString().concat(dataValue));
+            }
+            resultDisplay.value = firstNumber.toString();
+          } else {
+            if (secondNumber === null || secondNumber === 0) {
+              secondNumber = dataValue;
+            } else {
+              secondNumber = parseInt(secondNumber.toString().concat(dataValue));
+            }
+            resultDisplay.value = secondNumber.toString();
+          }
+        }
+      });
+    });
+    
+    function clearValues() {
+      tempNumber = null;
+      firstNumber = null;
+      secondNumber = null;
+      operation = null;
+      result = null;
+      resultDisplay.value = 0;
+    }
+    
+    clearButton.addEventListener("click", function () {
+      clearValues();
+    });
+    
+    const operatorButtons = document.querySelectorAll(".operator");
+    
+    operatorButtons.forEach((button) => {
+      
+      button.addEventListener('click', function(event){
+        const thisOperation = event.target.id;
+        console.log(thisOperation);
+        
+        
+        
+        if (firstNumber !== null && secondNumber === null){
+          switch (thisOperation){
+            case "add":
+              operation = "+";
+              break;
+     
+            case "subtract":
+              operation = "-";
+              break;
+            case "mulitiple":
+              operation = "*"
+              break;
+            case "divide":
+              operation = "/";
+              break;
+          }
+          resultDisplay.value = operation;
+        }
+      })
+      
+    });
+    
+    
+    equalButton.addEventListener('click', function(event){
+      if (secondNumber !== null) {
+        switch(operation){
+          case "+":
+            result = firstNumber + secondNumber;
+            break;
+          case "-":
+            result = firstNumber - secondNumber;
+            break;
+          case "*":
+            result = firstNumber * secondNumber;
+            break;
+          case "/":
+            result = firstNumber * secondNumber;
+            
+        }
+        resultDisplay.value
+      }
+    }) </script>
+</body>
+
+</html>
